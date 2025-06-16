@@ -22,7 +22,7 @@ namespace hw {
   }
 
   SSD1306::~SSD1306() {
-    delete m_screenData;
+    delete[] m_screenData;
   }
 
   void SSD1306::init() {

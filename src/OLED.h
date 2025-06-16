@@ -5,7 +5,7 @@
     wchar_t text[32];
     wchar_t other[] = L"abc";
     swprintf(text, sizeof(text)/sizeof(wchar_t), L"... %ls %d", other, int);
-    cout(&OLED, text, row, col);
+    display(&OLED, text, row, col);
  */
 
 #ifndef OLED_H
@@ -14,7 +14,11 @@
 #include "SSD1306.h"
 #include "Fonts/Pentacom.h"
 
-void i2c_setup() {
+#define OLED_ADDR 0x3C
+
+void oled_setup() 
+{
+    rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_I2C1);
     gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_OPENDRAIN, GPIO_I2C1_SCL | GPIO_I2C1_SDA);
     i2c_peripheral_disable(I2C1);
@@ -27,13 +31,13 @@ void i2c_setup() {
 
 hw::SSD1306 get_oled()
 {
-    hw::SSD1306 oled(I2C1, 0x3C, 128, 64);
+    static hw::SSD1306 oled(I2C1, OLED_ADDR, 128, 64);
     oled.init();
     oled.clear();
     return oled;
 }
 
-void cout(hw::SSD1306 *oled, wchar_t *text, int row, int col) 
+void display(hw::SSD1306 *oled, wchar_t *text, int row, int col) 
 {
     row*=8;
     col*=8;
